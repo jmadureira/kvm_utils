@@ -1,0 +1,10 @@
+#!/bin/bash
+set -x
+
+if test $(/sbin/ifconfig | grep -c $1) -gt 0; then
+    sudo /sbin/ifconfig $1 down
+    sudo /usr/sbin/brctl delif br0 $1
+fi
+
+sudo /usr/sbin/brctl addif br0 $1
+sudo /sbin/ifconfig $1 0.0.0.0 promisc up

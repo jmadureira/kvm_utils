@@ -1,0 +1,5 @@
+#!/bin/bash
+set -x
+
+sudo /sbin/ifconfig $1 down
+sudo /usr/sbin/brctl delif br0 $1
