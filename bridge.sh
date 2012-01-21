@@ -2,11 +2,12 @@
 
 cd `dirname $0`
 
-source .utils.sh || { echo -e "\033[31mUnable to include necessary utils.sh script. Exiting\033[0m"; exit -1; }
+source scripts/.utils.sh || { echo -e "\033[31mUnable to include necessary utils.sh script. Exiting\033[0m"; exit -1; }
+source scripts/bridge_utils.sh || fail "Unable to include necessary bridge_utils.sh script. Exiting"
 
 function usage {
   if [ $# -eq 1 ]; then
-    type help_$1 &>/dev/null || fail "Unkown command $1."
+    type help_$1 &>/dev/null || fail "Unknown command $1."
     help_$1
   else
     echo "Script responsible for handling the virtual machines networking."
