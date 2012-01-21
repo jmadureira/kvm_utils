@@ -10,11 +10,33 @@ function usage {
     type help_$1 &>/dev/null || fail "Unknown command $1."
     help_$1
   else
-    echo "Script responsible for handling the virtual machines networking."
+    echo "######################################################################"
+    echo "#                           KVM bridge utils.                        #"
+    echo "#               Handles the virtual machines networking.             #"
+    echo "######################################################################"
     echo "Available actions:"
-    echo "start"
-    echo "stop"
+    echo "-> start"
+    echo "-> stop"
+    echo "-> status"
     echo "For details regarding each particular command run: $0 help <command>."
+  fi
+}
+
+function help_status {
+  echo "Displays the network status relevant for the KVMs."
+  echo "Usage:"
+  echo "$0 status"
+}
+
+function status {
+  echo "Network status"
+  local dnspid=`pidof dnsmasq`
+  printf "dnsmasq process is "
+  if [ -n "$dnspid" ]; then
+    success "running with pid $dnspid"
+    echo "Listening for requests coming from `ps -ef | grep 4305 | grep dnsmasq | sed 's/.*-a \(.*\) --dhcp.*$/\1/'`"
+  else
+    echo -e "\033[31mnot running\033[0m"
   fi
 }
 
@@ -61,6 +83,9 @@ case $ACTION in
   ;;
   'stop')
     stop_bridge $*
+  ;;
+  'status')
+    status
   ;;
   'help')
     usage $*
