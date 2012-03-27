@@ -4,7 +4,7 @@ cd `dirname $0`
 
 source scripts/.utils.sh || { echo -e "\033[31mUnable to include necessary .utils.sh script. Exiting\033[0m"; exit -1; }
 source scripts/imageLib.sh || { echo -e "\033[31mUnable to include necessary imageLib.sh script. Exiting\033[0m"; exit -1; }
-source .vmLib.sh || { echo -e "\033[31mUnable to include necessary .vmLib.sh script. Exiting\033[0m"; exit -1; }
+source scripts/vmLib.sh || { echo -e "\033[31mUnable to include necessary vmLib.sh script. Exiting\033[0m"; exit -1; }
 
 function usage {
   echo "Usage: $0 <action> [arguments]"
