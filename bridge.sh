@@ -34,16 +34,24 @@ function status {
   printf "dnsmasq process is "
   if [ -n "$dnspid" ]; then
     success "running with pid $dnspid"
-    echo "Listening for requests coming from `ps -ef | grep 4305 | grep dnsmasq | sed 's/.*-a \(.*\) --dhcp.*$/\1/'`"
+    echo "Listening for requests coming from `ps -ef | grep $dnspid | grep dnsmasq | sed 's/.*-a \(.*\) --dhcp.*$/\1/'`"
   else
     echo -e "\033[31mnot running\033[0m"
+  fi
+  if [ -n "`brctl show | grep -v bridge | awk '{print $1}'`" ]; then
+    echo "Bridges available:"
+    echo "------------------------------------------------------------------"
+    brctl show
+    echo "------------------------------------------------------------------"
+  else
+    echo -e "\033[31mThere are no bridges configured\033[0m"
   fi
 }
 
 function help_start {
   echo "Sets up the network to be used by the virtual machines."
   echo "Usage:"
-  echo "$0 start <name of the bridge> [bridge ip address] [bridge net mask]"
+  echo "	$0 start <name of the bridge> [bridge ip address] [bridge net mask]"
 }
 
 function start_bridge {
