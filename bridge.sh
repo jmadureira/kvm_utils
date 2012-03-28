@@ -10,10 +10,10 @@ function usage {
     type help_$1 &>/dev/null || fail "Unknown command $1."
     help_$1
   else
-    echo "######################################################################"
-    echo "#                           KVM bridge utils.                        #"
-    echo "#               Handles the virtual machines networking.             #"
-    echo "######################################################################"
+    success "######################################################################"
+    success "#                           KVM bridge utils.                        #"
+    success "#               Handles the virtual machines networking.             #"
+    success "######################################################################"
     echo "Available actions:"
     echo "-> start"
     echo "-> stop"

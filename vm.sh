@@ -7,16 +7,28 @@ source scripts/imageLib.sh || { echo -e "\033[31mUnable to include necessary ima
 source scripts/vmLib.sh || { echo -e "\033[31mUnable to include necessary vmLib.sh script. Exiting\033[0m"; exit -1; }
 
 function usage {
-  echo "Usage: $0 <action> [arguments]"
-  echo "Available actions:"
-  echo "  test_support"
-  echo "  create_image"
-  echo "  create_based_image"
-  echo "  rebase_image"
-  echo "  start_vm"
-  echo "  create_vm"
-  echo "  list"
-  echo "  info"
+  success "######################################################################"
+  success "#                           KVM utils.                               #"
+  success "#          Scripts to manage virtual machine environments            #"
+  success "######################################################################"
+  if [ $# -eq 1 ]; then
+    type help_$1 &>/dev/null || fail "Unknown command $1."
+    help_$1
+  else
+    echo "Usage: $0 <action> [arguments]"
+    echo "Available actions:"
+    echo "  -> create_based_image"
+    echo "  -> create_image"
+    echo "  -> create_vm"
+    echo "  -> help"
+    echo "  -> info"
+    echo "  -> list"
+    echo "  -> rebase_image"
+    echo "  -> start_vm"
+    echo "  -> test_support"
+    echo "  -> info"
+    echo "To see the help of each action in particular run $0 help <action>"
+  fi
 }
 
 function create_vm {
@@ -65,7 +77,41 @@ function info {
   echo -e "MAC address:\t$MACADDRESS"
 }
 
+#type $ACTION &>/dev/null && $ACTION $* || { error "Unknown option $ACTION"; usage; exit -1; }
+
 ACTION=$1
 shift
-
-type $ACTION &>/dev/null && $ACTION $* || { error "Unknown option $ACTION"; usage; exit -1; }
+case $ACTION in
+  'test_support')
+    test_support $*
+  ;;
+  'create_image')
+    create_image $*
+  ;;
+  'create_based_image')
+    create_based_image $*
+  ;;
+  'rebase_image')
+    rebase_image $*
+  ;;
+  'start_vm')
+    start_vm $*
+  ;;
+  'create_vm')
+    create_vm $*
+  ;;
+  'list')
+    list $*
+  ;;
+  'info')
+    info $*
+  ;;
+  'help')
+    usage $*
+  ;;
+  *)
+    error "Unknown option $1"
+    usage
+    exit -1
+  ;;
+esac

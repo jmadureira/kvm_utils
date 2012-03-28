@@ -6,9 +6,9 @@ IMAGE_DIR="/home/$USER/.kvm/images/"
 function help_create_image {
   echo "Creates a new virtual image. The new image will be stored on $IMAGE_DIR."
   echo "Usage:"
-  echo "$0 create_image <name of the image> <image size>"
+  echo "	$0 create_image <name of the image> <image size>"
   echo "Example:"
-  echo "$0 create_image base_ubuntu 10G"
+  echo "	$0 create_image base_ubuntu 10G"
 }
 
 function create_image {
@@ -31,9 +31,9 @@ function help_create_based_image {
   echo "Creates a new snapshot based on an existing virtual machine image."
   echo "Both images reside on '$IMAGE_DIR'"
   echo "Usage:"
-  echo "$0 create_based_image <name of the new image> <base image file>"
+  echo "	$0 create_based_image <name of the new image> <base image file>"
   echo "Example:"
-  echo "$0 create_based_image ubuntu_postgres base_ubuntu"
+  echo "	$0 create_based_image ubuntu_postgres base_ubuntu"
 }
 
 function create_based_image {
