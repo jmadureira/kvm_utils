@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Load the given properties file. The function will first look on the user's kvm configuration directory. If none is found it will fallbak
+# Load the given properties file. The function will first look on the user's kvm configuration directory. If none is found it will fallback
 # to the current directory. Fails if the file isn't found anywhere.
 # Arguments:
 #  prop_file => the properties file to load. Can be either <name>.properties or just <name>.

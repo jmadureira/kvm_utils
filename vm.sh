@@ -26,7 +26,6 @@ function usage {
     echo "  -> rebase_image"
     echo "  -> start_vm"
     echo "  -> test_support"
-    echo "  -> info"
     echo "To see the help of each action in particular run $0 help <action>"
   fi
 }
@@ -42,15 +41,19 @@ function create_vm {
   local file=$conf_dir/$name.properties
   [ ! -e $file ] || { error "A VM machine named $name already exists."; return 1; }
   touch $file || { error "Unable to create configuration file $file"; return 1; }
-  printf "Select the number of CPUs allocated to the VM: " && read cpus
+  printf "Select the number of CPUs allocated to the VM (default: 1): " && read cpus
+  [ -n "$cpus" ] || cpus="1"
   echo "CPUS='$cpus'" >> $file
-  printf "Select the amount of RAM allocated to the VM: " && read ram
+  printf "Select the amount of RAM allocated to the VM (default: 500MB): " && read ram
+  [ -n "$ram" ] || ram="500"
   echo "MEMORY='$ram'" >> $file
-  printf "Select the VM image file: " && read image
+  printf "Select the VM image file (mandatory): " && read image
+  image="/home/$user/.kvm/images/$image.qcow2"
+  [ -e $image ] || { error "VM image '$image' was not found."; rm $file; return 1; }
   echo "IMAGE=$image" >> $file
-  printf "Select the cdrom iso file: " && read cdrom
+  printf "Select the cdrom iso file (default: none): " && read cdrom
   echo "CDROM='-cdrom $cdrom'" >> $file
-  printf "Select the mac address of the VM: " && read mac
+  printf "Select the mac address of the VM (default: random): " && read mac
   echo "MACADDRESS='$mac'" >> $file
   success "Created a new VM Machine named $name"
 }
@@ -69,15 +72,13 @@ function info {
   local prop_file="/home/$user/.kvm/configurations/$vm_name.properties"
   [ -e $prop_file ] || fail "No virtual machine configuration named $vm_name was found on /home/$user/.kvm/configurations"
   source $prop_file || fail "Failed to read info of virtual machine $vm_name"
-  echo "Details of virtual machine $vm_name"
+  success "Details of virtual machine $vm_name"
   echo -e "Number of CPUs:\t$CPUS" 
   echo -e "Memory:\t\t$MEMORY"
-  echo -e "Image file:\t$IMAGE"
   echo -e "Cdrom file:\t$CDROM"
   echo -e "MAC address:\t$MACADDRESS"
+  qemu-img info $IMAGE
 }
-
-#type $ACTION &>/dev/null && $ACTION $* || { error "Unknown option $ACTION"; usage; exit -1; }
 
 ACTION=$1
 shift
