@@ -27,6 +27,17 @@ function load_properties {
   return 0
 }
 
+function help_start_vm {
+  echo "Starts a VM machine using the configurations provided by the given properties file."
+  echo "Usage:"
+  echo "	$0 start_vm <VM name>"
+  echo "Arguments:"
+  echo "	VM name => name or path to the vm properties file."
+  echo "Examples:"
+  echo "	$0 start_vm base_ubuntu"
+  echo "	$0 start_vm redhat_base.properties"
+}
+
 #
 # Starts a VM machine using the configurations provided by the given properties file.
 # Arguments:
@@ -44,7 +55,7 @@ function start_vm {
   local qemu_down=`find . -name 'qemu-ifdown'`
   [ -e $qemu_down ] || { error "Unable to find qemu-ifdown script needed to start the VM"; return 1; }
   [ -e $IMAGE ] || { error "Unable to find the image file '$IMAGE'."; return 1; }
-  local kvm="kvm -smp $CPUS -m $MEMORY -drive file=$IMAGE,if=virtio,boot=on $CDROM -net nic,model=virtio,macaddr=$MACADDRESS -net tap,ifname=$iface,script=$qemu_up,downscript=$qemu_down -net dump,file=/tmp/vm0.pcap"
+  local kvm="kvm -vga vmware -smp $CPUS -m $MEMORY -drive file=$IMAGE,if=virtio,boot=on $CDROM -net nic,model=virtio,macaddr=$MACADDRESS -net tap,ifname=$iface,script=$qemu_up,downscript=$qemu_down -net dump,file=/tmp/vm0.pcap"
   echo "Running $kvm"
   $kvm
   # kvm has stopped - remove tap interface

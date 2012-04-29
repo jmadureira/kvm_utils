@@ -12,7 +12,7 @@ function usage {
   success "#          Scripts to manage virtual machine environments            #"
   success "######################################################################"
   if [ $# -eq 1 ]; then
-    type help_$1 &>/dev/null || fail "Unknown command $1."
+    type help_$1 &>/dev/null || fail "No help available for action $1."
     help_$1
   else
     echo "Usage: $0 <action> [arguments]"
