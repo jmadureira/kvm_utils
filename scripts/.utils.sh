@@ -43,6 +43,7 @@ function test_support {
   test_app 'dnsmasq' 'which dnsmasq'
   test_app 'tuntcl' 'which tunctl'
   test_app 'firehol' 'which firehol'
+  test_group "user $USER belongs to kvm group"
 }
 
 #
@@ -59,3 +60,14 @@ function test_app {
   echo " ]"
 }
 
+#
+# Tests if the current user belongs to the KVM group.
+# Arguments:
+# 1 - The test message
+#
+function test_group {
+  local len=$((50 - ${#1}))
+  printf "$1%${len}s[ "
+  groups $USER | grep 'kvm' > /dev/null && printf "\033[32mPASS  \033[0m" || printf "\033[31mFAILED\033[0m"
+  echo " ]"
+}
