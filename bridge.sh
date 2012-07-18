@@ -62,7 +62,7 @@ function start_bridge {
   [ -n "$bridge_ip" ] || { bridge_ip='129.168.100.1'; warning "Bridge ip address not set. Using default $bridge_ip."; }
   [ -n "$bridge_mask" ] || { bridge_mask='255.255.255.0'; warning "Bridge net mask not set. Using default $bridge_mask."; }
   setup_bridge $bridge_name $bridge_ip $bridge_mask || fail "Bridge setup failed."
-  setup_dns $bridge_name $bridge_ip '129.168.100.50,129.168.100.150,forever'
+  setup_dns $bridge_name $bridge_ip '129.168.100.50,129.168.100.150,forever' 'dns_conf'
   local firewall_file='firehol.conf'
   echo "Using $firewall_file as the firehol configuration file"
   start_firehol $firewall_file

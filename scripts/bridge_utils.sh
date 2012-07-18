@@ -37,18 +37,20 @@ function teardown_bridge {
 # Sets up dnsmasq.
 # Arguments:
 # 1 - name of the dns service name. This is needed so that later we can easily stop the service.
-# 2 - ip address were the service will be listening to
+# 2 - ip address were the service will be listening to.
 # 3 - ip address range to be given to clients.
+# 4 - location of a configuration directory whose files will be read by dnsmasq.
 #
 function setup_dns {
   local name=$1
   local address=$2
   local range=$3
+  local confdir=$4
   [ -n "$name" ] || { error "No DNS service name was given."; return 1; }
   [ -n "$address" ] || { error "No DNS binding address was given."; return 1; }
   [ -n "$range" ] || { error "No DHCP range was given."; return 1; }
-  echo "Starting dnsmasq on address $address named $name."
-  sudo dnsmasq -q -a $address --dhcp-range=$range --pid-file=/tmp/$name-dnsmasq.pid || return 1
+  echo "Starting dnsmasq on address $address named $name and using configuration files located on $confdir."
+  sudo dnsmasq -q -a $address --conf-dir=$confdir --dhcp-range=$range --pid-file=/tmp/$name-dnsmasq.pid || return 1
 }
 
 #
