@@ -55,10 +55,52 @@ function start_vm {
   local qemu_down=`find . -name 'qemu-ifdown'`
   [ -e $qemu_down ] || { error "Unable to find qemu-ifdown script needed to start the VM"; return 1; }
   [ -e $IMAGE ] || { error "Unable to find the image file '$IMAGE'."; return 1; }
-  local kvm="kvm -vga vmware -smp $CPUS -m $MEMORY -drive file=$IMAGE,if=virtio,boot=on $CDROM -net nic,model=virtio,macaddr=$MACADDRESS -net tap,ifname=$iface,script=$qemu_up,downscript=$qemu_down -net dump,file=/tmp/vm0.pcap"
+  local kvm="kvm -smp $CPUS -m $MEMORY -drive file=$IMAGE,if=virtio,boot=on $CDROM -net nic,model=virtio,macaddr=$MACADDRESS -net tap,ifname=$iface,script=$qemu_up,downscript=$qemu_down -net dump,file=/tmp/vm0.pcap"
   echo "Running $kvm"
   $kvm
   # kvm has stopped - remove tap interface
   sudo tunctl -d $iface #&> /dev/null
 }
 
+function help_quickstart_vm {
+  echo "Bootstrap of a new VM machine based on an already existing configuration."
+  echo "This action will execute the following actions:"
+  echo "  1 - load the properties of the base VM."
+  echo "  2 - create a snapshot of the base VM image."
+  echo "  3 - configure the new VM."
+  echo "  4 - launch the new VM."
+  echo "Usage:"
+  echo "	$0 quickstart_vm <VM name> <Original VM name>"
+  echo "Arguments:"
+  echo "	VM name => name of the new VM."
+  echo "	Original VM name => Name of the base VM image from where the new image will be created."
+  echo "Examples:"
+  echo "	$0 quickstart_vm postgresql base_ubuntu"
+}
+
+function quickstart_vm {
+  [ -n "$1" ] || { error "No VM name was provided."; return 1; }
+  local vm_name=$1
+  [ -n "$2" ] || { error "No base VM name was provided."; return 1; }  
+  load_properties $2 || return 1
+  local orig_image=`basename $IMAGE | sed 's/\..\{5\}$//'`
+  echo "Creating base image named $vm_name from $orig_image"
+  create_based_image $vm_name $orig_image -f
+  echo "Configuring the new VM machine..."
+  local user=`whoami`
+  local conf_dir="/home/$user/.kvm/configurations"
+  local file=$conf_dir/$vm_name.properties
+  if [ -e $file ]; then
+    warning "A VM machine named $name already exists. Its configuration will remain unchanged."
+  else
+    touch $file || { error "Unable to create configuration file $file"; return 1; }
+    echo "CPUS='$CPUS'" >> $file
+    echo "MEMORY='$MEMORY'" >> $file
+    local image="/home/$user/.kvm/images/$vm_name.qcow2"
+    echo "IMAGE=$image" >> $file
+    echo "CDROM=''" >> $file
+    local macaddress=`echo -n 00-60-2F; dd bs=1 count=3 if=/dev/random 2>/dev/null |hexdump -v -e '/1 "-%02X"'`
+    echo "MACADDRESS='$macaddress'" >> $file
+  fi
+  start_vm $vm_name
+}

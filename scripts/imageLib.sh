@@ -30,19 +30,23 @@ function create_image {
 function help_create_based_image {
   echo "Creates a new snapshot based on an existing virtual machine image."
   echo "Both images reside on '$IMAGE_DIR'"
+  echo "If -f is specified the new image file will replace any existing one."
   echo "Usage:"
-  echo "	$0 create_based_image <name of the new image> <base image file>"
+  echo "	$0 create_based_image <name of the new image> <base image file> [-f]"
   echo "Example:"
   echo "	$0 create_based_image ubuntu_postgres base_ubuntu"
+  echo "	$0 create_based_image ubuntu_postgres base_ubuntu -f"
 }
 
 function create_based_image {
   local name=$1
   local base_file=$2
+  local force=$3
   mkdir -p $IMAGE_DIR
   echo "Images will be stored on $IMAGE_DIR."
   [ -d $IMAGE_DIR ] || { error "Unable to create image $name. Images dir $IMAGE_DIR does not exist."; return 1; }
   [ -n "$name" ] || { error "No image name was given."; return 1; }
+  [ "$force" == "-f" ] && rm -rf "$IMAGE_DIR/$name.qcow2"
   [ -e "$IMAGE_DIR/$name.qcow2" ] && error "An image named $name already exists on $IMAGE_DIR." && return 1
   [ -n "$base_file" ] || { error "No base image name was given."; return 1; }
   [ -e "$IMAGE_DIR/$base_file.qcow2" ] || { error "Base image file '$base_file' was not found on $IMAGE_DIR."; return 1; }

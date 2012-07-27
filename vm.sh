@@ -23,8 +23,10 @@ function usage {
     echo "  -> help"
     echo "  -> info"
     echo "  -> list"
+    echo "  -> list_images"
     echo "  -> rebase_image"
     echo "  -> start_vm"
+    echo "  -> quickstart_vm"
     echo "  -> test_support"
     echo "To see the help of each action in particular run $0 help <action>"
   fi
@@ -65,6 +67,13 @@ function list {
   ls $conf_dir
 }
 
+function list_images {
+  local user=`whoami`
+  local img_dir="/home/$user/.kvm/images"
+  echo "Available VM images"
+  ls $img_dir
+}
+
 function info {
   local vm_name=$1
   [ -n "$vm_name" ] || fail "No virtual machine configuration name was specified."
@@ -98,11 +107,17 @@ case $ACTION in
   'start_vm')
     start_vm $*
   ;;
+  'quickstart_vm')
+    quickstart_vm $*
+  ;;
   'create_vm')
     create_vm $*
   ;;
   'list')
     list $*
+  ;;
+  'list_images')
+    list_images $*
   ;;
   'info')
     info $*
