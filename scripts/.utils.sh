@@ -43,6 +43,7 @@ function test_support {
   test_app 'dnsmasq' 'which dnsmasq'
   test_app 'tuntcl' 'which tunctl'
   test_app 'firehol' 'which firehol'
+  test_app 'ufw' 'which ufw'
   test_group "user $USER belongs to kvm group"
 }
 
