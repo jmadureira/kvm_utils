@@ -55,7 +55,7 @@ function start_vm {
   local qemu_down=`find . -name 'qemu-ifdown'`
   [ -e $qemu_down ] || { error "Unable to find qemu-ifdown script needed to start the VM"; return 1; }
   [ -e $IMAGE ] || { error "Unable to find the image file '$IMAGE'."; return 1; }
-  local kvm="kvm -smp $CPUS -m $MEMORY -drive file=$IMAGE,if=virtio $CDROM -net nic,model=virtio,macaddr=$MACADDRESS -net tap,ifname=$iface,script=$qemu_up,downscript=$qemu_down -net dump,file=/tmp/vm0.pcap"
+  local kvm="qemu-system-x86_64 -enable-kvm -smp $CPUS -m $MEMORY -drive file=$IMAGE,if=virtio $CDROM -net nic,model=virtio,macaddr=$MACADDRESS -net tap,ifname=$iface,script=$qemu_up,downscript=$qemu_down -net dump,file=/tmp/vm0.pcap"
   echo "Running $kvm"
   $kvm
   # kvm has stopped - remove tap interface
